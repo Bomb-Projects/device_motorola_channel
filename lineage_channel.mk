@@ -11,6 +11,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Device
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
 
+# EroFS
+TARGET_USE_EROFS := true
+
 # Gapps
 WITH_GMS=true
 
