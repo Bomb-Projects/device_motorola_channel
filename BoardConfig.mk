@@ -12,19 +12,15 @@ TARGET_OTA_ASSERT_DEVICE := channel
 # A/B updater
 AB_OTA_UPDATER := true
 
+AB_OTA_PARTITIONS += \
+    boot \
+    dtbo \
+    system \
+    vendor
+
 ifeq ($(TARGET_USE_EROFS),true)
 AB_OTA_PARTITIONS += \
-    boot \
-    dtbo \
-    system \
-    system_ext \
-    vendor
-else
-AB_OTA_PARTITIONS += \
-    boot \
-    dtbo \
-    system \
-    vendor
+    system_ext
 endif
 
 # Audio
@@ -187,7 +183,6 @@ BOARD_VENDORIMAGE_PARTITION_SIZE := 603979776
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 endif
 
-
 BOARD_ROOT_EXTRA_SYMLINKS := \
     /vendor/fsg:/fsg
 
@@ -209,7 +204,6 @@ TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 
 # Root
 BOARD_ROOT_EXTRA_FOLDERS := persist
-
 
 # SELinux
 include device/qcom/sepolicy-legacy-um/SEPolicy.mk
@@ -253,6 +247,5 @@ WIFI_DRIVER_FW_PATH_AP  := "ap"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 PRODUCT_VENDOR_MOVE_ENABLED := true
-
 
 include vendor/motorola/channel/BoardConfigVendor.mk

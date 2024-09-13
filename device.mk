@@ -221,6 +221,11 @@ PRODUCT_PACKAGES += \
     init.target.rc \
     ueventd.qcom.rc
 
+ifeq ($(TARGET_USE_EROFS),true)
+PRODUCT_PACKAGES += \
+    target.erofs.rc
+endif
+
 # IPACM
 PRODUCT_PACKAGES += \
     ipacm \
