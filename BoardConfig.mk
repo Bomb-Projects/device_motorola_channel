@@ -137,7 +137,6 @@ LOC_HIDL_VERSION := 3.0
 # HIDL
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/hidl/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/hidl/compatibility_matrix.xml
-DEVICE_FRAMEWORK_MANIFEST_FILE := $(DEVICE_PATH)/configs/hidl/framework_manifest.xml
 TARGET_FS_CONFIG_GEN += \
     $(DEVICE_PATH)/config.fs \
     $(DEVICE_PATH)/mot_aids.fs
