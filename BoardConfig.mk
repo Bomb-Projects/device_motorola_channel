@@ -22,7 +22,11 @@
 # definition file).
 #
 
-PLATFORM_PATH := device/motorola/sdm632-common
+DEVICE_PATH := device/motorola/channel
+
+# Assertions
+TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
+TARGET_OTA_ASSERT_DEVICE := channel
 
 # Platform
 TARGET_ARCH := arm64
@@ -116,8 +120,9 @@ USE_CAMERA_STUB := true
 
 # Display
 USE_DEVICE_SPECIFIC_DISPLAY := true
-DEVICE_SPECIFIC_DISPLAY_PATH := $(PLATFORM_PATH)/qcom-caf/display
+DEVICE_SPECIFIC_DISPLAY_PATH := $(DEVICE_PATH)/qcom-caf/display
 OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
+TARGET_SCREEN_DENSITY := 320
 TARGET_USES_ION := true
 TARGET_USES_HWC2 := true
 TARGET_USES_GRALLOC1 := true
@@ -131,29 +136,30 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := $(TARGET_BOARD_PLATFORM)
 LOC_HIDL_VERSION := 3.0
 
 # HIDL
-DEVICE_MANIFEST_FILE := $(PLATFORM_PATH)/manifest.xml
-DEVICE_MATRIX_FILE := $(PLATFORM_PATH)/compatibility_matrix.xml
-DEVICE_FRAMEWORK_MANIFEST_FILE := $(PLATFORM_PATH)/framework_manifest.xml
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/hidl/manifest.xml
+DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/hidl/compatibility_matrix.xml
+DEVICE_FRAMEWORK_MANIFEST_FILE := $(DEVICE_PATH)/configs/hidl/framework_manifest.xml
 TARGET_FS_CONFIG_GEN += \
-    $(PLATFORM_PATH)/config.fs \
-    $(PLATFORM_PATH)/mot_aids.fs
+    $(DEVICE_PATH)/config.fs \
+    $(DEVICE_PATH)/mot_aids.fs
 
 # Init
-TARGET_INIT_VENDOR_LIB := //$(PLATFORM_PATH):libinit_sdm632
-TARGET_RECOVERY_DEVICE_MODULES := libinit_sdm632
+TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):libinit_channel
+TARGET_RECOVERY_DEVICE_MODULES := libinit_channel
 
 # Kernel
 BOARD_KERNEL_CMDLINE += androidboot.hardware=qcom ehci-hcd.park=3 lpm_levels.sleep_disabled=1
 BOARD_KERNEL_CMDLINE += androidboot.bootdevice=7824900.sdhci androidboot.usbconfigfs=true
 BOARD_KERNEL_CMDLINE += loop.max_part=7
 BOARD_KERNEL_CMDLINE += androidboot.veritymode=eio
-#BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_PAGESIZE :=  2048
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_SEPARATED_DTBO := true
+BOARD_RAMDISK_USE_XZ := true
 BOARD_INCLUDE_RECOVERY_DTBO := true
+TARGET_KERNEL_CONFIG := channel_defconfig
 TARGET_KERNEL_SOURCE := kernel/motorola/sdm632
 TARGET_KERNEL_VERSION := 4.9
 TARGET_KERNEL_ARCH := arm64
@@ -170,21 +176,19 @@ TARGET_KERNEL_ADDITIONAL_FLAGS := \
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
-# NFC / ODM
-ODM_MANIFEST_SKUS += nfc
-ODM_MANIFEST_NFC_FILES := $(PLATFORM_PATH)/odm_manifest_nfc.xml
+# Lineage Health
+TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH := /sys/class/power_supply/battery/battery_charging_enabled
+
+# Low Memory
+MALLOC_SVELTE := true
 
 # Partitions
-BOARD_FLASH_BLOCK_SIZE := 131072                  # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
-ifneq (,$(filter %channel, $(TARGET_PRODUCT)))
-BOARD_VENDORIMAGE_EXTFS_INODE_COUNT   := 4096
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE    := squashfs
-BOARD_VENDORIMAGE_JOURNAL_SIZE        := 0
-BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR := lz4
-else
+BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2466250752
+BOARD_VENDORIMAGE_PARTITION_SIZE := 335544320
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-endif
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_USES_RECOVERY_AS_BOOT := true
 TARGET_NO_RECOVERY := true
@@ -200,16 +204,16 @@ TARGET_HAS_NO_WLAN_STATS := true
 TARGET_USES_INTERACTION_BOOST := true
 
 # Properties
-TARGET_ODM_PROP += $(PLATFORM_PATH)/odm.prop
-TARGET_PRODUCT_PROP += $(PLATFORM_PATH)/product.prop
-TARGET_SYSTEM_PROP += $(PLATFORM_PATH)/system.prop
-TARGET_VENDOR_PROP += $(PLATFORM_PATH)/vendor.prop
+TARGET_ODM_PROP += $(DEVICE_PATH)/properties/odm.prop
+TARGET_PRODUCT_PROP += $(DEVICE_PATH)/properties/product.prop
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/properties/system.prop
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/properties/vendor.prop
 
 # RIL
 ENABLE_VENDOR_RIL_SERVICE := true
 
 # Recovery
-TARGET_RECOVERY_FSTAB := $(PLATFORM_PATH)/rootdir/etc/fstab.qcom
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 
 # Root
 BOARD_ROOT_EXTRA_FOLDERS := persist
@@ -219,8 +223,11 @@ VENDOR_SECURITY_PATCH := 2021-02-01
 
 # SELinux
 include device/qcom/sepolicy-legacy-um/SEPolicy.mk
-BOARD_VENDOR_SEPOLICY_DIRS += $(PLATFORM_PATH)/sepolicy/vendor
-PRODUCT_PRIVATE_SEPOLICY_DIRS += $(PLATFORM_PATH)/sepolicy/private
+BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+PRODUCT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
+
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
 
 # Treble
 BOARD_VNDK_VERSION := current
@@ -241,3 +248,6 @@ WIFI_DRIVER_FW_PATH_AP  := "ap"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 PRODUCT_VENDOR_MOVE_ENABLED := true
+
+# inherit from the proprietary version
+include vendor/motorola/channel/BoardConfigVendor.mk
