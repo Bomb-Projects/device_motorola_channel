@@ -21,4 +21,7 @@
          3 = right side
     -->
     <integer name="config_fingerprintSensorLocation">0</integer>
+
+    <!-- Whether to show vendor security patch level -->
+     <bool name="config_show_vendor_patch_level" translatable="false">false</bool>
 </resources>
