@@ -14,20 +14,17 @@
 # limitations under the License.
 #
 
-# Inherit from motorola sdm632-common
--include device/motorola/sdm632-common/BoardConfigCommon.mk
-
 DEVICE_PATH := device/motorola/channel
 
 # Assertions
 TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 TARGET_OTA_ASSERT_DEVICE := channel
 
+# Common
+-include device/motorola/sdm632-common/BoardConfigCommon.mk
+
 # Display
 TARGET_SCREEN_DENSITY := 320
-
-# HIDL
-DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
 
 # Kernel
 TARGET_KERNEL_CONFIG := channel_defconfig
@@ -40,9 +37,8 @@ TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH := /sys/class/power_supply/battery/
 MALLOC_SVELTE := true
 
 # Partitions
-BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432        #    32768 * 1024 mmcblk0p41-42
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2466250752    #  2408448 * 1024 mmcblk0p62-63
-BOARD_VENDORIMAGE_PARTITION_SIZE := 335544320     #   841316 * 1024 mmcblk0p60-61
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2466250752
+BOARD_VENDORIMAGE_PARTITION_SIZE := 335544320
 
 # Properties
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
@@ -53,5 +49,8 @@ BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
 
-# inherit from the proprietary version
+# VINTF
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/configs/vintf/manifest.xml
+
+# Vendor Blobs
 include vendor/motorola/channel/BoardConfigVendor.mk
